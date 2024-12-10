@@ -10,6 +10,7 @@ export default function ArtistPortfolio() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showNewsletter, setShowNewsletter] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedImageDetails, setSelectedImageDetails] = useState(null);
 
   // Using more explicit URL structure with transformation parameters
   // Using placeholder images that comply with CSP
@@ -71,19 +72,48 @@ export default function ArtistPortfolio() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const ImageModal = ({ image, onClose }) => (
-    <div
-      className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <Image
-        src={image}
-        alt="Artwork"
-        className="max-w-full max-h-[90vh] object-contain rounded-lg"
-        onClick={(e) => e.stopPropagation()}
-      />
-    </div>
-  );
+  const ImageModal = ({ image, onClose, initialPosition }) => {
+    const [animationComplete, setAnimationComplete] = useState(false);
+
+    useEffect(() => {
+      // Trigger animation completion after a short delay
+      const timer = setTimeout(() => setAnimationComplete(true), 50);
+      return () => clearTimeout(timer);
+    }, []);
+
+    return (
+      <div
+        className="fixed inset-0 bg-black/0 backdrop-blur-0 z-50 transition-all duration-500"
+        style={{
+          backgroundColor: animationComplete ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0)',
+          backdropFilter: animationComplete ? 'blur(8px)' : 'blur(0px)',
+        }}
+        onClick={onClose}
+      >
+        <div
+          className="absolute transform-gpu transition-all duration-500 ease-out"
+          style={{
+            width: animationComplete ? '90vw' : initialPosition.width,
+            height: animationComplete ? '90vh' : initialPosition.height,
+            left: animationComplete ? '5vw' : initialPosition.left,
+            top: animationComplete ? '5vh' : initialPosition.top,
+          }}
+        >
+          <Image
+            src={image}
+            alt="Artwork"
+            className="w-full h-full object-contain rounded-lg transform-gpu transition-transform duration-500"
+            style={{
+              transform: animationComplete ? 'scale(1) rotate(0deg)' : 'scale(0.9) rotate(-5deg)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            width={1200}
+            height={1200}
+          />
+        </div>
+      </div>
+    );
+  };
 
   const handleImageError = (e) => {
     console.error('Image failed to load:', e.target.src);
@@ -276,20 +306,32 @@ export default function ArtistPortfolio() {
                 <div
                   key={i}
                   className="relative group cursor-pointer"
-                  onClick={() => setSelectedImage(image)}
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setSelectedImageDetails({
+                      image,
+                      initialPosition: {
+                        width: rect.width,
+                        height: rect.height,
+                        left: rect.left,
+                        top: rect.top,
+                      }
+                    });
+                  }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 rounded-lg transform rotate-2 group-hover:rotate-6 transition-transform" />
-                  <div className="relative bg-white rounded-lg overflow-hidden">
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 rounded-lg transform rotate-2 group-hover:rotate-6 transition-transform duration-300" 
+                  />
+                  <div className="relative bg-white rounded-lg overflow-hidden transform-gpu transition-transform duration-300 group-hover:scale-95">
                     <Image
                       src={image}
                       alt={`Artwork ${i + 1}`}
                       width={400}
                       height={400}
-                      className="w-full h-full object-cover aspect-square transition-transform group-hover:scale-110"
+                      className="w-full h-full object-cover aspect-square transition-all duration-300 group-hover:scale-110"
                       loading="lazy"
                       onError={(e) => {
                         console.error('Gallery image failed to load:', image);
-                        e.target.onerror = null;
                         e.target.src = '/api/placeholder/400/400';
                       }}
                     />
@@ -393,8 +435,12 @@ export default function ArtistPortfolio() {
       </main>
 
       {/* Image Modal */}
-      {selectedImage && (
-        <ImageModal image={selectedImage} onClose={() => setSelectedImage(null)} />
+      {selectedImageDetails && (
+        <ImageModal 
+          image={selectedImageDetails.image} 
+          initialPosition={selectedImageDetails.initialPosition}
+          onClose={() => setSelectedImageDetails(null)} 
+        />
       )}
 
       {/* Newsletter Section */}
