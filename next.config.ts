@@ -6,8 +6,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/msk-portfolio',
-  assetPrefix: '/msk-portfolio',
   trailingSlash: true,
   distDir: 'out',
 };
