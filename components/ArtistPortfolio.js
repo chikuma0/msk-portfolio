@@ -10,6 +10,7 @@ export default function ArtistPortfolio() {
   const [showNewsletter, setShowNewsletter] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedImageDetails, setSelectedImageDetails] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Using more explicit URL structure with transformation parameters
   // Using placeholder images that comply with CSP
@@ -71,58 +72,20 @@ export default function ArtistPortfolio() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const ImageModal = ({ image, onClose, initialPosition }) => {
-    const [animationComplete, setAnimationComplete] = useState(false);
-
-    useEffect(() => {
-      // Set animation complete after initial render
-      const timer = setTimeout(() => {
-        setAnimationComplete(true);
-      }, 50);
-
-      // Cleanup function
-      return () => {
-        clearTimeout(timer);
-        setAnimationComplete(false);
-      };
-    }, [image]); // Add image as dependency to reset animation when image changes
-
-    const handleClose = () => {
-      setAnimationComplete(false);
-      setTimeout(() => {
-        onClose();
-      }, 300); // Give time for close animation
-    };
-
+  const ImageModal = ({ image, onClose }) => {
     return (
-      <div
-        className="fixed inset-0 z-50 transition-all duration-500"
-        style={{
-          backgroundColor: `rgba(0, 0, 0, ${animationComplete ? 0.8 : 0})`,
-          backdropFilter: `blur(${animationComplete ? 8 : 0}px)`,
-          pointerEvents: animationComplete ? 'auto' : 'none',
-        }}
-        onClick={handleClose}
+      <div 
+        className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+        onClick={onClose}
       >
-        <div
-          className="absolute transform-gpu transition-all duration-500 ease-out"
-          style={{
-            width: animationComplete ? '90vw' : initialPosition.width,
-            height: animationComplete ? '90vh' : initialPosition.height,
-            left: animationComplete ? '5vw' : initialPosition.left,
-            top: animationComplete ? '5vh' : initialPosition.top,
-          }}
-        >
+        <div className="relative max-w-7xl max-h-[90vh] w-full">
           <Image
             src={image}
             alt="Artwork"
-            className="w-full h-full object-contain rounded-lg transform-gpu transition-transform duration-500"
-            style={{
-              transform: animationComplete ? 'scale(1) rotate(0deg)' : 'scale(0.9) rotate(-5deg)',
-            }}
-            onClick={(e) => e.stopPropagation()}
             width={1200}
             height={1200}
+            className="w-full h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
             priority
           />
         </div>
@@ -321,20 +284,7 @@ export default function ArtistPortfolio() {
                 <div
                   key={i}
                   className="relative group cursor-pointer"
-                  onClick={(e) => {
-                    if (!selectedImageDetails) { // Only allow selection if no image is currently selected
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      setSelectedImageDetails({
-                        image,
-                        initialPosition: {
-                          width: rect.width,
-                          height: rect.height,
-                          left: rect.left,
-                          top: rect.top,
-                        }
-                      });
-                    }
-                  }}
+                  onClick={() => setSelectedImage(image)}
                 >
                   <div 
                     className="absolute inset-0 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 rounded-lg transform rotate-2 group-hover:rotate-6 transition-transform duration-300" 
@@ -452,11 +402,10 @@ export default function ArtistPortfolio() {
       </main>
 
       {/* Image Modal */}
-      {selectedImageDetails && (
+      {selectedImage && (
         <ImageModal 
-          image={selectedImageDetails.image} 
-          initialPosition={selectedImageDetails.initialPosition}
-          onClose={() => setSelectedImageDetails(null)} 
+          image={selectedImage} 
+          onClose={() => setSelectedImage(null)} 
         />
       )}
 
