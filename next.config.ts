@@ -7,12 +7,9 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   basePath: '/msk-portfolio',
-  assetPrefix: 'https://chikuma0.github.io/msk-portfolio',
+  assetPrefix: '/msk-portfolio/', // Changed this line - removed full URL
   trailingSlash: true,
   distDir: '.next',
-  experimental: {
-    // Remove appDir configuration as it's no longer experimental
-  },
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   webpack(config: Configuration) {
     return config;
