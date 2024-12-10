@@ -75,19 +75,34 @@ export default function ArtistPortfolio() {
     const [animationComplete, setAnimationComplete] = useState(false);
 
     useEffect(() => {
-      // Trigger animation completion after a short delay
-      const timer = setTimeout(() => setAnimationComplete(true), 50);
-      return () => clearTimeout(timer);
-    }, []);
+      // Set animation complete after initial render
+      const timer = setTimeout(() => {
+        setAnimationComplete(true);
+      }, 50);
+
+      // Cleanup function
+      return () => {
+        clearTimeout(timer);
+        setAnimationComplete(false);
+      };
+    }, [image]); // Add image as dependency to reset animation when image changes
+
+    const handleClose = () => {
+      setAnimationComplete(false);
+      setTimeout(() => {
+        onClose();
+      }, 300); // Give time for close animation
+    };
 
     return (
       <div
-        className="fixed inset-0 bg-black/0 backdrop-blur-0 z-50 transition-all duration-500"
+        className="fixed inset-0 z-50 transition-all duration-500"
         style={{
-          backgroundColor: animationComplete ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0)',
-          backdropFilter: animationComplete ? 'blur(8px)' : 'blur(0px)',
+          backgroundColor: `rgba(0, 0, 0, ${animationComplete ? 0.8 : 0})`,
+          backdropFilter: `blur(${animationComplete ? 8 : 0}px)`,
+          pointerEvents: animationComplete ? 'auto' : 'none',
         }}
-        onClick={onClose}
+        onClick={handleClose}
       >
         <div
           className="absolute transform-gpu transition-all duration-500 ease-out"
@@ -108,6 +123,7 @@ export default function ArtistPortfolio() {
             onClick={(e) => e.stopPropagation()}
             width={1200}
             height={1200}
+            priority
           />
         </div>
       </div>
@@ -306,16 +322,18 @@ export default function ArtistPortfolio() {
                   key={i}
                   className="relative group cursor-pointer"
                   onClick={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    setSelectedImageDetails({
-                      image,
-                      initialPosition: {
-                        width: rect.width,
-                        height: rect.height,
-                        left: rect.left,
-                        top: rect.top,
-                      }
-                    });
+                    if (!selectedImageDetails) { // Only allow selection if no image is currently selected
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setSelectedImageDetails({
+                        image,
+                        initialPosition: {
+                          width: rect.width,
+                          height: rect.height,
+                          left: rect.left,
+                          top: rect.top,
+                        }
+                      });
+                    }
                   }}
                 >
                   <div 
