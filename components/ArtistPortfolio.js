@@ -105,16 +105,14 @@ export default function ArtistPortfolio() {
     const email = e.target.email.value;
     
     try {
-      await fetch('https://script.google.com/macros/s/1TKH_Yw31SyfCiD9n4Kbfwv91Ou28817k9D3uW2Yl4_FMWrGPy1NWcmGb/exec', {
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('timestamp', new Date().toISOString());
+      
+      await fetch('https://script.google.com/macros/s/1TKH_Yw31SyfCiD9n4Kbfwv91Ou28817k9D3uW2Yl4_FMWrGPy1NWcmGb', {
         method: 'POST',
         mode: 'no-cors',
-        headers: {
-          'Content-Type': 'text/plain',
-        },
-        body: JSON.stringify({
-          email: email,
-          timestamp: new Date().toISOString()
-        })
+        body: formData
       });
 
       alert('Thank you for subscribing! ♡');
@@ -334,13 +332,11 @@ export default function ArtistPortfolio() {
             <div className="max-w-2xl mx-auto">
               <div className="bg-white/30 backdrop-blur-md rounded-xl p-8 shadow-xl">
                 <form 
-                  action="https://docs.google.com/forms/d/e/1FAIpQLSdJhVe9zYZH5AB6R0Fcq2BHrXVoQTTwExW0_wj4vmC3YDRXKg/formResponse"
-                  method="POST"
-                  target="_blank"
                   onSubmit={(e) => {
                     e.preventDefault();
                     const formData = new FormData(e.target);
-                    fetch(e.target.action, {
+                    
+                    fetch('https://docs.google.com/forms/d/e/1FAIpQLSdJhVe9zYZH5AB6R0Fcq2BHrXVoQTTwExW0_wj4vmC3YDRXKg', {
                       method: 'POST',
                       mode: 'no-cors',
                       body: formData
@@ -349,7 +345,8 @@ export default function ArtistPortfolio() {
                       alert('Message sent successfully! ♡');
                       e.target.reset();
                     })
-                    .catch(() => {
+                    .catch((error) => {
+                      console.error('Error:', error);
                       alert('Oops! Something went wrong. Please try again.');
                     });
                   }}
