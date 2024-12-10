@@ -77,15 +77,19 @@ export default function ArtistPortfolio() {
         className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
         onClick={onClose}
       >
-        <div className="relative max-w-7xl max-h-[90vh] w-full">
+        <div className="relative w-full h-full max-w-[95vw] max-h-[90vh] flex items-center justify-center">
           <Image
             src={image}
             alt="Artwork"
             width={1200}
             height={1200}
-            className="w-full h-full object-contain rounded-lg"
+            className="w-auto h-auto max-w-full max-h-full object-contain rounded-lg"
             onClick={(e) => e.stopPropagation()}
             priority
+            style={{
+              maxHeight: 'calc(90vh - 2rem)', // Account for padding
+              maxWidth: 'calc(95vw - 2rem)'   // Account for padding
+            }}
           />
         </div>
       </div>
