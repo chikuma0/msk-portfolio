@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   basePath: '/msk-portfolio',
-  assetPrefix: '/msk-portfolio/', // Changed this line - removed full URL
+  assetPrefix: '/msk-portfolio/',
   trailingSlash: true,
   distDir: '.next',
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
