@@ -1,24 +1,23 @@
 import type { NextConfig } from "next";
+import { Configuration } from 'webpack';
 
 const nextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
-    domains: ['res.cloudinary.com', 'placehold.co'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-      }
-    ],
   },
   basePath: '/msk-portfolio',
-  assetPrefix: '/msk-portfolio/',
+  assetPrefix: 'https://chikuma0.github.io/msk-portfolio',
   trailingSlash: true,
+  experimental: {
+    appDir: true
+  },
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  webpack(config: Configuration) {
+    return config;
+  },
+  distDir: '.next',
+  srcDir: 'src',
 };
 
 export default nextConfig;

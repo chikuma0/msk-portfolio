@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes float0 {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(100px, -100px, 0) rotate(10deg); }
+}
+
+@keyframes float1 {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(-100px, -150px, 0) rotate(-10deg); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(150px, 100px, 0) rotate(15deg); }
+}
+
+@keyframes float3 {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(-120px, 120px, 0) rotate(-15deg); }
+}
+
+@keyframes float4 {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(80px, -80px, 0) rotate(20deg); }
+}
+
+@keyframes float5 {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(-150px, -50px, 0) rotate(-20deg); }
+}
+
+@keyframes float6 {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(120px, 120px, 0) rotate(25deg); }
+}
+
+@keyframes float7 {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(-80px, 80px, 0) rotate(-25deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.floating-element {
+  @apply absolute pointer-events-none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.floating-element-0 { animation: float0 15s infinite alternate ease-in-out; }
+.floating-element-1 { animation: float1 17s infinite alternate ease-in-out; }
+.floating-element-2 { animation: float2 19s infinite alternate ease-in-out; }
+.floating-element-3 { animation: float3 21s infinite alternate ease-in-out; }
+.floating-element-4 { animation: float4 23s infinite alternate ease-in-out; }
+.floating-element-5 { animation: float5 25s infinite alternate ease-in-out; }
+.floating-element-6 { animation: float6 27s infinite alternate ease-in-out; }
+.floating-element-7 { animation: float7 29s infinite alternate ease-in-out; }
