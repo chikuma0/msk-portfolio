@@ -9,7 +9,6 @@ export default function ArtistPortfolio() {
   const [showPrismEffect, setShowPrismEffect] = useState(false);
   const [showNewsletter, setShowNewsletter] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedImageDetails, setSelectedImageDetails] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
   // Using more explicit URL structure with transformation parameters
