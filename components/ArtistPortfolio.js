@@ -7,7 +7,6 @@ export default function ArtistPortfolio() {
   const [activeSection, setActiveSection] = useState('home');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [showPrismEffect, setShowPrismEffect] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [showNewsletter, setShowNewsletter] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedImageDetails, setSelectedImageDetails] = useState(null);
