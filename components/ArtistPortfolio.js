@@ -9,6 +9,7 @@ export default function ArtistPortfolio() {
   const [showPrismEffect, setShowPrismEffect] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showNewsletter, setShowNewsletter] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Using more explicit URL structure with transformation parameters
   // Using placeholder images that comply with CSP
@@ -178,19 +179,65 @@ export default function ArtistPortfolio() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full bg-white/20 backdrop-blur-md z-40 p-4">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          {Object.keys(sections).map((section) => (
-            <button
-              key={section}
-              className={`px-6 py-2 rounded-full font-bold backdrop-blur-sm transition-all duration-300 ${
-                activeSection === section 
-                  ? 'bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-white shadow-lg' 
-                  : 'bg-white/30 text-pink-700 hover:bg-white/50'
-              }`}
-              onClick={() => setActiveSection(section)}
-            >
-              {section.charAt(0).toUpperCase() + section.slice(1)}
-            </button>
-          ))}
+          {/* Logo/Title for mobile */}
+          <div className="text-pink-800 font-bold text-xl">
+            ✧･ﾟ msk ･ﾟ✧
+          </div>
+
+          {/* Hamburger menu for mobile */}
+          <button 
+            className="md:hidden text-pink-800 hover:text-pink-600"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <div className="space-y-1.5">
+                <div className="w-6 h-0.5 bg-current"></div>
+                <div className="w-6 h-0.5 bg-current"></div>
+                <div className="w-6 h-0.5 bg-current"></div>
+              </div>
+            )}
+          </button>
+
+          {/* Desktop menu */}
+          <div className="hidden md:flex space-x-4">
+            {Object.keys(sections).map((section) => (
+              <button
+                key={section}
+                className={`px-6 py-2 rounded-full font-bold backdrop-blur-sm transition-all duration-300 ${
+                  activeSection === section 
+                    ? 'bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-white shadow-lg' 
+                    : 'bg-white/30 text-pink-700 hover:bg-white/50'
+                }`}
+                onClick={() => setActiveSection(section)}
+              >
+                {section.charAt(0).toUpperCase() + section.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
+          <div className="mt-4 space-y-2 p-2 bg-white/30 backdrop-blur-md rounded-lg">
+            {Object.keys(sections).map((section) => (
+              <button
+                key={section}
+                className={`w-full px-6 py-2 rounded-full font-bold backdrop-blur-sm transition-all duration-300 text-left ${
+                  activeSection === section 
+                    ? 'bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-white shadow-lg' 
+                    : 'bg-white/30 text-pink-700 hover:bg-white/50'
+                }`}
+                onClick={() => {
+                  setActiveSection(section);
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                {section.charAt(0).toUpperCase() + section.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
       </nav>
 
