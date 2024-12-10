@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 import { Configuration } from 'webpack';
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
@@ -9,15 +9,14 @@ const nextConfig = {
   basePath: '/msk-portfolio',
   assetPrefix: 'https://chikuma0.github.io/msk-portfolio',
   trailingSlash: true,
+  distDir: '.next',
   experimental: {
-    appDir: true
+    // Remove appDir configuration as it's no longer experimental
   },
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   webpack(config: Configuration) {
     return config;
-  },
-  distDir: '.next',
-  srcDir: 'src',
+  }
 };
 
 export default nextConfig;
