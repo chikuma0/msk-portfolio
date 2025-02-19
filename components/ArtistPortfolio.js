@@ -110,30 +110,40 @@ export default function ArtistPortfolio() {
     console.error('Image failed to load:', e.target.src);
   };
 
-  const handleNewsletterSubmit = async (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleNewsletterSubmit = (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
+    if (isSubmitting) return;
     
-    try {
-      const formData = new FormData();
-      formData.append('email', email);
-      formData.append('timestamp', new Date().toISOString());
-
-      await fetch('https://script.google.com/macros/s/AKfycbxw1DvAiLpmohp5VboGw7rOh5wJcl47JuAdKo-mwb1NYu-iboTLLrzwbOeIx_UynOZA/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        body: formData
-      });
-
-      // Since we're using no-cors, we can't access the response
-      // We'll assume success if no error was thrown
-
-      alert('Thank you for subscribing! ♡ Your email has been added to our list.');
-      e.target.reset();
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Oops! Something went wrong. Please try again.');
-    }
+    setIsSubmitting(true);
+    const form = e.target;
+    // Convert the form to a traditional form submission
+    form.method = 'POST';
+    form.action = 'https://script.google.com/macros/s/AKfycbw_unJU0skPQ_hQMq3ry8K-68tcOvNSXagzu7IzzHdvgv6TdW8TAkF6PENF3cfzKslD/exec';
+    
+    // Add target to prevent page reload
+    form.target = '_blank';
+    
+    // Add timestamp field
+    const timestampInput = document.createElement('input');
+    timestampInput.type = 'hidden';
+    timestampInput.name = 'timestamp';
+    timestampInput.value = new Date().toISOString();
+    form.appendChild(timestampInput);
+    
+    // Submit the form
+    form.submit();
+    
+    // Show success message
+    alert('Thank you for subscribing! ♡ Your email has been added to our list.');
+    form.reset();
+    
+    // Clean up
+    setTimeout(() => {
+      form.removeChild(timestampInput);
+      setIsSubmitting(false);
+    }, 1000);
   };
 
   return (
