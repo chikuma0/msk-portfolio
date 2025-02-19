@@ -119,7 +119,7 @@ export default function ArtistPortfolio() {
       formData.append('email', email);
       formData.append('timestamp', new Date().toISOString());
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxw1DvAiLpmohp5VboGw7rOh5wJcl47JuAdKo-mwb1NYu-iboTLLrzwbOeIx_UynOZA/exec', {
+      await fetch('https://script.google.com/macros/s/AKfycbxw1DvAiLpmohp5VboGw7rOh5wJcl47JuAdKo-mwb1NYu-iboTLLrzwbOeIx_UynOZA/exec', {
         method: 'POST',
         mode: 'no-cors',
         body: formData
