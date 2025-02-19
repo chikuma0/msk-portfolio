@@ -115,22 +115,18 @@ export default function ArtistPortfolio() {
     const email = e.target.email.value;
     
     try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxEfyc892A_84fEiQUDj75DWHnaD7VVTbib33PhS0f38raVX2wo8drvZcEYyM0LcnQK/exec', {
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('timestamp', new Date().toISOString());
+
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxw1DvAiLpmohp5VboGw7rOh5wJcl47JuAdKo-mwb1NYu-iboTLLrzwbOeIx_UynOZA/exec', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          timestamp: new Date().toISOString()
-        })
+        mode: 'no-cors',
+        body: formData
       });
 
-      const result = await response.json();
-      
-      if (result.status === 'error') {
-        throw new Error(result.message || 'Subscription failed');
-      }
+      // Since we're using no-cors, we can't access the response
+      // We'll assume success if no error was thrown
 
       alert('Thank you for subscribing! ♡ Your email has been added to our list.');
       e.target.reset();
