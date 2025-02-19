@@ -10,6 +10,16 @@ export default function ArtistPortfolio() {
   const [showNewsletter, setShowNewsletter] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [decorativePositions, setDecorativePositions] = useState(Array(8).fill({ left: 50, top: 50 }));
+
+  useEffect(() => {
+    setDecorativePositions(
+      Array(8).fill(null).map(() => ({
+        left: Math.random() * 100,
+        top: Math.random() * 100
+      }))
+    );
+  }, []);
 
   // Using more explicit URL structure with transformation parameters
   // Using placeholder images that comply with CSP
@@ -105,17 +115,24 @@ export default function ArtistPortfolio() {
     const email = e.target.email.value;
     
     try {
-      const formData = new FormData();
-      formData.append('email', email);
-      formData.append('timestamp', new Date().toISOString());
-      
-      await fetch('https://script.google.com/macros/s/1TKH_Yw31SyfCiD9n4Kbfwv91Ou28817k9D3uW2Yl4_FMWrGPy1NWcmGb', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxEfyc892A_84fEiQUDj75DWHnaD7VVTbib33PhS0f38raVX2wo8drvZcEYyM0LcnQK/exec', {
         method: 'POST',
-        mode: 'no-cors',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          timestamp: new Date().toISOString()
+        })
       });
 
-      alert('Thank you for subscribing! ♡');
+      const result = await response.json();
+      
+      if (result.status === 'error') {
+        throw new Error(result.message || 'Subscription failed');
+      }
+
+      alert('Thank you for subscribing! ♡ Your email has been added to our list.');
       e.target.reset();
     } catch (error) {
       console.error('Error:', error);
@@ -137,13 +154,13 @@ export default function ArtistPortfolio() {
       </div>
 
       {/* Floating decorative elements */}
-      {[...Array(8)].map((_, i) => (
+      {decorativePositions.map((position, i) => (
         <div
           key={i}
           className="absolute pointer-events-none"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
+            left: `${position.left}%`,
+            top: `${position.top}%`,
             animation: `float${i} ${15 + i * 2}s infinite alternate`
           }}
         >
@@ -219,7 +236,10 @@ export default function ArtistPortfolio() {
                     ? 'bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-white shadow-lg' 
                     : 'bg-white/30 text-pink-700 hover:bg-white/50'
                 }`}
-                onClick={() => setActiveSection(section)}
+                onClick={() => {
+                  console.log('Setting active section to:', section);
+                  setActiveSection(section);
+                }}
               >
                 {section.charAt(0).toUpperCase() + section.slice(1)}
               </button>
@@ -330,41 +350,49 @@ export default function ArtistPortfolio() {
 
           {activeSection === 'contact' && (
             <div className="max-w-2xl mx-auto">
-              <div className="bg-white/30 backdrop-blur-md rounded-xl p-8 shadow-xl">
-                <form 
+              <div className="bg-white/30 backdrop-blur-md rounded-xl p-8 shadow-xl relative z-50 mb-20">
+                <form
+                  action="https://formspree.io/f/xyzklldn"
+                  method="POST"
+                  className="space-y-6"
                   onSubmit={(e) => {
                     e.preventDefault();
-                    const formData = new FormData(e.target);
+                    const form = e.target;
                     
-                    fetch('https://docs.google.com/forms/d/e/1FAIpQLSdJhVe9zYZH5AB6R0Fcq2BHrXVoQTTwExW0_wj4vmC3YDRXKg', {
+                    fetch(form.action, {
                       method: 'POST',
-                      mode: 'no-cors',
-                      body: formData
+                      body: new FormData(form),
+                      headers: {
+                        'Accept': 'application/json'
+                      }
                     })
-                    .then(() => {
-                      alert('Message sent successfully! ♡');
-                      e.target.reset();
+                    .then(response => {
+                      if (response.ok) {
+                        alert('Message sent successfully! ♡');
+                        form.reset();
+                      } else {
+                        throw new Error('Form submission failed');
+                      }
                     })
                     .catch((error) => {
                       console.error('Error:', error);
                       alert('Oops! Something went wrong. Please try again.');
                     });
                   }}
-                  className="space-y-6"
                 >
                   <div>
                     <label className="block text-pink-800 mb-2">Name</label>
                     <input
-                      name="entry.239466880" // Replace with your actual form field ID
+                      name="name"
                       type="text"
                       required
                       className="w-full px-4 py-2 rounded-lg bg-white/50 backdrop-blur-sm border border-pink-200 focus:outline-none focus:border-pink-400"
                     />
                   </div>
-                        <div>
+                  <div>
                     <label className="block text-pink-800 mb-2">Email</label>
                     <input
-                      name="entry.2114364710" // Replace with your actual form field ID
+                      name="email"
                       type="email"
                       required
                       className="w-full px-4 py-2 rounded-lg bg-white/50 backdrop-blur-sm border border-pink-200 focus:outline-none focus:border-pink-400"
@@ -373,7 +401,7 @@ export default function ArtistPortfolio() {
                   <div>
                     <label className="block text-pink-800 mb-2">Subject</label>
                     <input
-                      name="entry.31372182" // Replace with your actual form field ID
+                      name="subject"
                       type="text"
                       required
                       className="w-full px-4 py-2 rounded-lg bg-white/50 backdrop-blur-sm border border-pink-200 focus:outline-none focus:border-pink-400"
@@ -382,7 +410,7 @@ export default function ArtistPortfolio() {
                   <div>
                     <label className="block text-pink-800 mb-2">Message</label>
                     <textarea
-                      name="entry.1100771166"
+                      name="message"
                       required
                       rows="4"
                       className="w-full px-4 py-2 rounded-lg bg-white/50 backdrop-blur-sm border border-pink-200 focus:outline-none focus:border-pink-400"
