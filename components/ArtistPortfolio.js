@@ -122,9 +122,6 @@ export default function ArtistPortfolio() {
     form.method = 'POST';
     form.action = 'https://script.google.com/macros/s/AKfycbw_unJU0skPQ_hQMq3ry8K-68tcOvNSXagzu7IzzHdvgv6TdW8TAkF6PENF3cfzKslD/exec';
     
-    // Add target to prevent page reload
-    form.target = '_blank';
-    
     // Add timestamp field
     const timestampInput = document.createElement('input');
     timestampInput.type = 'hidden';
