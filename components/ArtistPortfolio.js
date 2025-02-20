@@ -111,37 +111,49 @@ export default function ArtistPortfolio() {
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isContactSubmitting, setIsContactSubmitting] = useState(false);
 
-  const handleNewsletterSubmit = (e) => {
-    e.preventDefault();
-    if (isSubmitting) return;
+  const handleNewsletterSubmit = async (e) => {
+  e.preventDefault();
+  if (isSubmitting) return;
+  
+  setIsSubmitting(true);
+  const form = e.target;
+  const formData = new FormData(form);
+  formData.append('formType', 'newsletter');
+
+  try {
+    // Log form data for debugging
+    const formDataObj = {};
+    formData.forEach((value, key) => {
+      formDataObj[key] = value;
+    });
+    console.log('Sending newsletter form data:', formDataObj);
+
+    const response = await fetch('https://script.google.com/macros/s/AKfycbyxQBnFCewcnfRwGSzvN-_xC5zgZiGmitl556tzRuhjpvwcbohpFf5NU0J8NusFdBMp/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(formData),
+    });
+
+    console.log('Response status:', response.status);
     
-    setIsSubmitting(true);
-    const form = e.target;
-    // Convert the form to a traditional form submission
-    form.method = 'POST';
-    form.action = 'https://script.google.com/macros/s/AKfycbw_unJU0skPQ_hQMq3ry8K-68tcOvNSXagzu7IzzHdvgv6TdW8TAkF6PENF3cfzKslD/exec';
-    
-    // Add timestamp field
-    const timestampInput = document.createElement('input');
-    timestampInput.type = 'hidden';
-    timestampInput.name = 'timestamp';
-    timestampInput.value = new Date().toISOString();
-    form.appendChild(timestampInput);
-    
-    // Submit the form
-    form.submit();
-    
-    // Show success message
-    alert('Thank you for subscribing! ♡ Your email has been added to our list.');
-    form.reset();
-    
-    // Clean up
-    setTimeout(() => {
-      form.removeChild(timestampInput);
-      setIsSubmitting(false);
-    }, 1000);
-  };
+    const result = await response.json();
+    if (result.status === 'success') {
+      alert('Thank you for subscribing! ♡ Your email has been added to our list.');
+      form.reset();
+    } else {
+      throw new Error(result.message || 'Submission failed');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Oops! Something went wrong. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -355,32 +367,47 @@ export default function ArtistPortfolio() {
             <div className="max-w-2xl mx-auto">
               <div className="bg-white/30 backdrop-blur-md rounded-xl p-8 shadow-xl relative z-50 mb-20">
                 <form
-                  action="https://formspree.io/f/xyzklldn"
-                  method="POST"
                   className="space-y-6"
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
-                    const form = e.target;
+                    if (isContactSubmitting) return;
                     
-                    fetch(form.action, {
-                      method: 'POST',
-                      body: new FormData(form),
-                      headers: {
-                        'Accept': 'application/json'
-                      }
-                    })
-                    .then(response => {
-                      if (response.ok) {
-                        alert('Message sent successfully! ♡');
+                    setIsContactSubmitting(true);
+                    const form = e.target;
+                    const formData = new FormData(form);
+                    formData.append('formType', 'contact');
+
+                    try {
+                      // Log form data for debugging
+                      const formDataObj = {};
+                      formData.forEach((value, key) => {
+                        formDataObj[key] = value;
+                      });
+                      console.log('Sending contact form data:', formDataObj);
+
+                      const response = await fetch('https://script.google.com/macros/s/AKfycbyxQBnFCewcnfRwGSzvN-_xC5zgZiGmitl556tzRuhjpvwcbohpFf5NU0J8NusFdBMp/exec', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams(formData),
+                      });
+
+                      console.log('Response status:', response.status);
+                      
+                      const result = await response.json();
+                      if (result.status === 'success') {
+                        alert('Thank you for your message! ♡ We will get back to you soon.');
                         form.reset();
                       } else {
-                        throw new Error('Form submission failed');
+                        throw new Error(result.message || 'Submission failed');
                       }
-                    })
-                    .catch((error) => {
+                    } catch (error) {
                       console.error('Error:', error);
                       alert('Oops! Something went wrong. Please try again.');
-                    });
+                    } finally {
+                      setIsContactSubmitting(false);
+                    }
                   }}
                 >
                   <div>
